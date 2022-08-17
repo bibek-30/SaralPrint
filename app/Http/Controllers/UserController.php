@@ -78,7 +78,7 @@ class UserController extends Controller
 
 
 
-        $token = $user->createToken($request->email)->plainTextToken;
+        // $token = $user->createToken($request->email)->plainTextToken;
 
         $response = [
             "status"  => true,

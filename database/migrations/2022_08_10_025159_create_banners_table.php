@@ -18,7 +18,9 @@ return new class extends Migration
             $table->id();
             $table->string('title')->unique();
             $table->string('cover_img');
-            $table->enum('status', ['active', 'inactive'])->default('inactive');
+            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->string('desc');
+            $table->string('type');
             $table->timestamps();
             // Carbon::now()->format('Y-m-d')
         });

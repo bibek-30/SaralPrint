@@ -6,6 +6,11 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Requests\productRequest;
 use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+use function PHPSTORM_META\type;
 
 class ProductController extends Controller
 {
@@ -16,7 +21,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-
+        $products = Product::all();
+        return response()->json($products, 200);
     }
 
     /**
@@ -27,28 +33,40 @@ class ProductController extends Controller
     public function create(ProductRequest $request)
     {
         $request-> validate([
-        'image' => 'required|mimes:jpg,jpeg,png|max:5048',
+        'image' => 'mimes:jpg,jpeg,png|max:5048',
     ]);
 
         // return $request;
+        // $image=$request->image;
 
 
         $product_data= json_decode($request->props);
+        // if (!$image) {
+
+
         $file_product = $request->file('image');
         $filename = uniqid() . '.' . $file_product->extension();
         $file_product->storeAs('public/images/product', $filename);
+        // }
+        $product=Product::create([
+                'name' => $product_data->name,
+                'image' =>env('APP_URL'). Storage::url('public/images/product/'.$filename),
+                // 'images'=>Storage::disk('public')->('images\product', $filename),
+                'desc' => $product_data->desc,
+                'category_id'=> $product_data->category_id,
+                'size'=>$product_data->size,
+                'paperWeight'=>$product_data->paperWeight,
+                'lamination'=>$product_data->lamination,
+                'weight'=>$product_data->weight,
+                'discount'=>$product_data->discount,
 
-        Product::create([
-            'name' => $product_data->name,
-            'image' => $filename,
-            'desc' => $product_data->desc,
-            'category_id'=> $product_data->category_id,
         ]);
+
 
         $response = [
             "status" => true,
             "message" => "Product Added Successfully",
-
+            "data"=> $product
         ];
 
         return $response;
@@ -70,9 +88,10 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $product = Product::find($id);
+        $product = Product::with('rateList','attribute')->find($id);
+        // return $product;
 
         if (!$product) {
             return response()->json(["message" => "Product not found"], 404);
@@ -86,11 +105,55 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product)
-    {
-        //
+
+
+    public function cart($cart){
+        return $cart;
     }
 
+
+    public function addToCart($id)
+    {
+        $product = Product::find($id);
+        if(!$product) {
+            abort(404);
+        }
+        $cart = session()->get('Cart');
+
+        // if cart is empty then this the first product
+        if(!$cart) {
+            $cart = [
+                    $id => [
+                        "name" => $product->name,
+                        "quantity" => 1,
+                        "price" => $product->price,
+                        "photo" => $product->photo
+                    ]
+            ];
+            session()->put('cart', $cart);
+            return response($cart,200);
+            // return redirect()->back()->with('success', 'Product added to cart successfully!');
+        }
+        // if cart not empty then check if this product exist then increment quantity
+        if(isset($cart[$id])) {
+            $cart[$id]['quantity']++;
+            session()->put('cart', $cart);
+            return response('success');
+
+            // return redirect()->back()->with('success', 'Product added to cart successfully!');
+        }
+        // if item not exist in cart then add to cart with quantity = 1
+        $cart[$id] = [
+            "name" => $product->name,
+            "quantity" => 1,
+            "price" => $product->price,
+            "photo" => $product->photo
+        ];
+        session()->put('cart', $cart);
+        return response('Sucess');
+        // return redirect()->back()->with('success', 'Product added to cart successfully!');
+
+    }
 
     public function categories($id)
         {

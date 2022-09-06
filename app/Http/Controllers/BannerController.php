@@ -28,29 +28,37 @@ class BannerController extends Controller
     {
         $request->validate([
             'info*.title' => 'required|unique:banners|min:3|max:255',
-            // 'cover' => 'required|required|mimes:jpg,jpeg,png|max:5048|unique:banners',
-            'cover_img' => 'required|mimes:jpg,jpeg,png|max:5048',
-            'info*.status' => 'required|in:active,inactive'
+            'cover_img' => 'mimes:jpg,jpeg,png|max:3048',
+            'info*.status' => 'required|in:active,inactive',
+            'info*.type' => 'required',
+            'info*.desc' => 'required',
+
+
         ]);
-        return $request;
+        // return $request;
 
         $banner_data= json_decode($request->info);
+
         $file_banner = $request->file('cover_img');
         $filename_banner = uniqid() . '.' . $file_banner->extension();
         $file_banner->storeAs('public/images/banner', $filename_banner);
 
-        Banner::create([
+        $banner=Banner::create([
             'title' => $banner_data->title,
             'cover_img' => $filename_banner,
-            'status' => $banner_data->status
+            'status' => $banner_data->status,
+            'type' => $banner_data->type,
+            'desc' => $banner_data->desc,
         ]);
 
         $response = [
             "status" => true,
             "message" => "Banner Added Successfully",
+            "banner"=>$banner
         ];
         // Response if banner added successfully
-        return response()->json($response, 201);
+        return $response;
+
     }
 
     /**
@@ -61,7 +69,7 @@ class BannerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //`
     }
 
     /**

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Http\Requests\UserRequest;
+use GrahamCampbell\ResultType\Success;
 
 class UserController extends Controller
 {
@@ -37,9 +38,11 @@ class UserController extends Controller
     public function create(UserRequest $request)
     {
 
+        // return $request;
+        // $user_data = json_decode($request->data);
 
-        $user_data = json_decode($request->data);
-        // $user_data = $request;
+        //working part
+        $user_data = $request;
 
         // return response($request,200);
 
@@ -48,20 +51,8 @@ class UserController extends Controller
 
         // $data_with_prefix = preg_filter('/^/', '977', $user_data->mobile_number);
         // $mobile_numbers   = implode(",", $data_with_prefix);
-        if($user_data->type == "corporate" &&  $user_data->pan_number){
-            $file_pan     = $request->file('pan_document');
-            $filename_pan = uniqid() . '.' . $file_pan->extension();
-            $file_pan->storeAs('public/images/pan', $filename_pan);
 
-            if ($request->has('profile_image')) {
-
-            $file_profile     = $request->file('profile_image');
-            $filename_profile = uniqid() . '.' . $file_profile->extension();
-            $file_profile->storeAs('public/images/profile', $filename_profile);
-        }
-    }
-
-        User::create([
+        $user=User::create([
             'name'                 => $user_data->name,
             'gender'               => $user_data->gender,
             'address'              => $user_data->address,
@@ -70,20 +61,17 @@ class UserController extends Controller
             'password'             => Hash::make($user_data->password),
             'type'                 => $user_data->type,
             'pan_number'           => $request->has('pan_number') ? $user_data->pan_number : null,
-            'pan_document'         => $request->has('pan_document') ? $filename_pan: null,
-            'profile_image'        => $request->has('profile_image') ? $filename_profile: null,
             'mobile_verified_code' => rand(11111, 99999),
         ]);
 
 
-
-
-        // $token = $user->createToken($request->email)->plainTextToken;
+        $token = $user->createToken($user_data->email)->plainTextToken;
         // hello
-
         $response = [
             "status"  => true,
             "message" => "User Account Created Successfully",
+            "user"=>$user,
+            "token"=>$token,
         ];
 
         // Response if user created successfully
@@ -91,19 +79,57 @@ class UserController extends Controller
 
     }
 
+    public function image(Request $request, $id){
 
+        $request->validate([
+            'pan_document'          => 'mimes:jpg,jpeg,png|max:2048',
+            'profile_image'         => 'mimes:jpg,jpeg,png|max:2048',
+        ]);
+        // return $request->file('pan_document');
+
+        // $user_data = json_decode($request);
+        // if($request->has('pan_document')){
+            $file_pan     = $request->file('pan_document');
+            $filename_pan = uniqid() . '.' . $file_pan->extension();
+            $file_pan->storeAs('public/images/pan', $filename_pan);
+                if($request->has('profile_image')){
+            $file_profile     = $request->file('profile_image');
+            $filename_profile = uniqid() . '.' . $file_profile->extension();
+            $file_profile->storeAs('public/images/profile', $filename_profile);
+        }
+
+        // return "helllo";
+
+
+        $user                = User::find($id);
+        //  $user->pan_document = $request->pan_document ? $filename_pan : null;
+         $user->pan_document = env('APP_URL'). Storage::url('public/images/pan/'.$filename_pan);
+         $user->profile_image = env('APP_URL'). Storage::url('public/images/profile/'.$filename_profile);
+        $user->save();
+        // return $user->pan_document;
+
+        // $user->pan_document  = $request->pan_document ? $request->pan_document : $user->pan_document;
+        // $user->profile_image  = $request->profile_image ? $request->profile_image : $user->profile_image;
+
+        // 'pan_document'         => $request->has('pan_document') ? $filename_pan: null;
+        //     'profile_image'        => $request->has('profile_image') ? $filename_profile: null;
+
+
+        return response("success");
+    }
+
+
+            // }
     // Signup for Admin
     public function createAdmin(Request $request)
     {
         $request->validate([
-            'data*.name'            => ['required'],
+            'data*.name'            => 'required',
             'data*.gender'          => 'required|in:male,female,others',
             'data*.address'         => 'required',
-            'data*.mobile_number'   => 'required|array',
-            'data*.mobile_number.*' => 'required|numeric|regex:/9[6-8]{1}[0-9]{8}/|digits:10|distinct|unique:users',
-            'data*.password'        => 'required|min:8|max:20|regex:/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,20})/|confirmed',
+            'data*.mobile_number.*' => 'required|numeric|regex:/9[6-8]{1}[0-9]{8}/|digits:10|unique:users',
             'data*.email'           => 'required|email|unique:users',
-            'profile_image'         => 'mimes:jpg,jpeg,png|max:5048|unique:users',
+            'data*.password'        => 'required|min:8|max:20|regex:/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,20})/|confirmed',
             'data*.is_admin'        => 'boolean',
         ]);
 
@@ -123,7 +149,6 @@ class UserController extends Controller
             'email'                => $user_data->email,
             'password'             => Hash::make($user_data->password),
             'type'                 => "admin",
-            'profile_image'        => $filename_profile,
             'is_admin'             => true,
             'mobile_verified_code' => rand(11111, 99999),
         ]);
@@ -143,6 +168,7 @@ class UserController extends Controller
     {
         $request->validate([
             'email'       => 'required|email',
+            "mobile_number"=>"unique:user",
             'password'    => 'required',
             'device_name' => 'required',
         ]);
@@ -214,7 +240,7 @@ class UserController extends Controller
         $request->validate([
             'mobile_number' => 'unique:users',
             'gender'        => 'in:male,female,others',
-            'mobile_number' => 'numeric|regex:/9[6-8]{1}[0-9]{8}/|digits:10|unique:users',
+            'mobile_number' => 'numeric|regex:/9[6-8]{1}[0-9]{8}/|digits:10',
             'password'      => 'min:8|max:20|regex:/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,20})/|confirmed',
             'type'          => 'in:corporate,individual',
             'is_admin'      => 'boolean',
@@ -245,7 +271,7 @@ class UserController extends Controller
             "message" => "Successfully Updated",
         ];
 
-        return response()->json($successResponse, 201);
+        return response()->json($successResponse, 200);
     }
 
     // Update own profile

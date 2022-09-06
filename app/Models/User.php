@@ -22,8 +22,10 @@ class User extends Authenticatable
         'gender',
         'email',
         'password',
+        'city',
         'address',
         'mobile_number',
+        'telephone_no  ',
         'type',
         'pan_number',
         'status',
@@ -40,7 +42,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'mobile_verified_code',
         'remember_token',
     ];
 
@@ -53,4 +54,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'mobile_number_verified_at' => 'datetime',
     ];
+    public function orderproduct(){
+        return $this->hasMany('App\OrderProduct');
+}
 }

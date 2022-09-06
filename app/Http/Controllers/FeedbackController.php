@@ -37,9 +37,13 @@ class SettingController extends Controller
             'email' => 'required|email',
             'about_us' => 'required',
             'facebook' => 'required',
-        ]);
+            'twitter' =>             'required',
+            'instagram' => 'required',
+            'linkedIn' =>'required',
+            'website' =>'required',
+    ]);
 
-        $setting = Setting::create([
+             $setting = Setting::create([
             'name' => $request->name,
             'estd' => $request->estd,
             'address' => $request->address,

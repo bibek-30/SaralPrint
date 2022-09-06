@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CategoryCollection;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -16,12 +18,24 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Category $category)
     {
-        $categories = Category::where('parent_id', null)
-        // ->orderby('name', 'asc')
-        ->get();
-        return $categories;
+        $categories = Category::with('subCategories')->where('parent_id', null)->get();
+        // $categories = Category::with('children')->get();
+
+        // return new CategoryCollection($categories);
+        // return new CategoryCollection(Category::with('children')->get());
+        // // ->orderby('name', 'asc')
+        // ->get();
+        // $category = [
+        //     "status"  => "success",
+        //     "data"=>$categories
+        // ];
+        // return $categories;
+
+        return response()->json($categories, 200);
+        // return CategoryResource::collection(Category::with('children')->all());
+        // return CategoryResource::make($categories);
     }
     /**
      * Show the form for creating a new resource.
@@ -32,7 +46,6 @@ class CategoryController extends Controller
     {
             $request-> validate([
             'name'=>'required|unique:categories',
-            // 'slug'
             'parent_id'
         ]);
 
@@ -53,7 +66,7 @@ class CategoryController extends Controller
      */
     public function subcategory(Request $request, $id)
     {
-        $categories = Category::with('children')->find($id);
+        $categories = Category::with('subCategories.products')->find($id);
         return $categories;
     }
 
@@ -63,8 +76,9 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Category $id)
     {
+       return response()->json(CategoryResource::collection(Category::all()),200);
     }
 
     /**
@@ -74,7 +88,6 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function editCategory($id, Request $request)
-
     {
         $request->validate([
             'name',

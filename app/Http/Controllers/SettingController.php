@@ -32,6 +32,7 @@ class SettingController extends Controller
             'estd' => 'required',
             'address' => 'required',
             'zip' => 'required',
+            'maps'=>'required',
             'mobile_number' => 'required|regex:/9[6-8]{1}[0-9]{8}/',
             'landline' => 'required',
             'email' => 'required|email',
@@ -44,6 +45,7 @@ class SettingController extends Controller
             'estd' => $request->estd,
             'address' => $request->address,
             'zip' => $request->zip,
+            'maps'=>$request->maps,
             'mobile_number' => $request->mobile_number,
             'landline' => $request->landline,
             'email' => $request->email,
@@ -116,10 +118,15 @@ class SettingController extends Controller
         $us = Setting::find($id);
         $us->name = $request->name ? $request->name : $us->name;
         $us->estd = $request->estd ? $request->estd : $us->estd;
+        $us->maps = $request->maps ? $request->maps : $us->maps;
         $us->address = $request->address ? $request->address : $us->address;
         $us->zip = $request->zip ? $request->zip : $us->zip;
         $us->about_us = $request->about_us ? $request->about_us : $us->about_us;
-
+        $us->facebook = $request->facebook ? $request->facebook : $us->facebook;
+        $us->twitter = $request->twitter ? $request->twitter : $us->twitter;
+        $us->linkedIn = $request->linkedIn ? $request->linkedIn : $us->linkedIn;
+        $us->instagram = $request->instagram ? $request->instagram : $us->instagram;
+        $us->website = $request->website ? $request->website : $us->website;
 
 
         $us->update();

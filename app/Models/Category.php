@@ -19,12 +19,11 @@ class Category extends Model
         $query-> whereNull('parent_id');
     }
 
-    public function children(){
-        return $this ->hasMany(Category::class,'parent_id');
+    public function subCategories(){
+        return $this ->hasMany(Category::class,'parent_id',null);
     }
 
-    public function products()
-    {
+    public function products(){
         return $this->hasMany(Product::class);
     }
 }

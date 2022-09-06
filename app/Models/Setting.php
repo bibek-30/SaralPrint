@@ -16,6 +16,7 @@ class Setting extends Model
         'zip',
         'mobile_number',
         'landline',
+        'maps',
         'email',
         'about_us',
         'facebook',

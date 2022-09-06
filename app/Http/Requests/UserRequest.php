@@ -30,12 +30,13 @@ class UserRequest extends FormRequest
             // 'data*.mobile_number'   => 'required|array',
             'data*.mobile_number' => 'required|regex:/9[6-8]{1}[0-9]{8}/',
             // 'data*.mobile_number.*' => 'required|numeric|regex:/9[6-8]{1}[0-9]{8}/|digits:10|distinct|unique:users',
-            'data*.password'        => 'required|min:8|max:20|regex:/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,20})/|confirmed',
             'data*.email'           => 'required|email|unique:users',
+            'data*.password'        => 'required|min:8|max:20|regex:/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,20})/|confirmed',
+            'password_confirmation' => 'required_with:password|same:password',
             'data*.type'            => 'required|in:individual,corporate',
-            'data*.pan_number'      => 'required_with:type,corporate|min:8|max:10',
-            'pan_document'          => 'required_with:type,corporate|mimes:jpg,jpeg,png|max:2048',
-            'profile_image'         => 'mimes:jpg,jpeg,png|max:2048',
+            'data*.pan_number'      => 'numeric|min:8|max:10',
+            // 'pan_document'         => 'mimes:jpg,jpeg,png|max:2048',
+
         ];
     }
 }

@@ -21,21 +21,7 @@ class CategoryController extends Controller
     public function index(Category $category)
     {
         $categories = Category::with('subCategories')->where('parent_id', null)->get();
-        // $categories = Category::with('children')->get();
-
-        // return new CategoryCollection($categories);
-        // return new CategoryCollection(Category::with('children')->get());
-        // // ->orderby('name', 'asc')
-        // ->get();
-        // $category = [
-        //     "status"  => "success",
-        //     "data"=>$categories
-        // ];
-        // return $categories;
-
         return response()->json($categories, 200);
-        // return CategoryResource::collection(Category::with('children')->all());
-        // return CategoryResource::make($categories);
     }
     /**
      * Show the form for creating a new resource.

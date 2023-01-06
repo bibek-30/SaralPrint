@@ -34,8 +34,6 @@ class UserRequest extends FormRequest
             'data*.password'        => 'required|min:8|max:20|regex:/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,20})/|confirmed',
             'password_confirmation' => 'required_with:password|same:password',
             'data*.type'            => 'required|in:individual,corporate',
-            'data*.pan_number'      => 'numeric|min:8|max:10',
-            // 'pan_document'         => 'mimes:jpg,jpeg,png|max:2048',
 
         ];
     }

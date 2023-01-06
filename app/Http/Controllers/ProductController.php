@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
-use App\Http\Requests\productRequest;
 use App\Models\Category;
 use Illuminate\Support\Facades\Storage;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+
 
 use function PHPSTORM_META\type;
 
@@ -30,46 +28,43 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(ProductRequest $request)
+    public function create(Request $request)
     {
-        $request-> validate([
-        'image' => 'mimes:jpg,jpeg,png|max:5048',
-    ]);
 
-        // return $request;
-        // $image=$request->image;
-
-
-        $product_data= json_decode($request->props);
-        // if (!$image) {
-
+        $request->validate([
+            'name' => 'required|unique:products,name',
+            'image' => 'mimes:jpg,jpeg,png|max:5048',
+        ]);
 
         $file_product = $request->file('image');
         $filename = uniqid() . '.' . $file_product->extension();
         $file_product->storeAs('public/images/product', $filename);
-        // }
-        $product=Product::create([
-                'name' => $product_data->name,
-                'image' =>env('APP_URL'). Storage::url('public/images/product/'.$filename),
-                // 'images'=>Storage::disk('public')->('images\product', $filename),
-                'desc' => $product_data->desc,
-                'category_id'=> $product_data->category_id,
-                'size'=>$product_data->size,
-                'paperWeight'=>$product_data->paperWeight,
-                'lamination'=>$product_data->lamination,
-                'weight'=>$product_data->weight,
-                'discount'=>$product_data->discount,
 
+        $product = Product::create([
+            'name' => $request->name,
+            'desc' => $request->desc,
+            'image' =>env('APP_URL').Storage::url('public/images/product/'.$filename),
+            // 'category_id'=> $request->category_id,
         ]);
 
+        foreach($request->attribute as $row){
+            $new_attribute[] = [
+                "product_id" => $product->id,
+                "attribute" => $row['attribute'],
+                "value" => $row['value']
+            ];
+        }
 
-        $response = [
-            "status" => true,
-            "message" => "Product Added Successfully",
-            "data"=> $product
+        $product->attribute()->insert($new_attribute);
+
+        $status = [
+            'success' =>true,
+            'message' => "Add Sucess"
         ];
 
-        return $response;
+        return response($status,201);
+
+
     }
     /**
      * Store a newly created resource in storage.
@@ -107,53 +102,53 @@ class ProductController extends Controller
      */
 
 
-    public function cart($cart){
-        return $cart;
-    }
+    // public function cart($cart){
+    //     return $cart;
+    // }
 
 
-    public function addToCart($id)
-    {
-        $product = Product::find($id);
-        if(!$product) {
-            abort(404);
-        }
-        $cart = session()->get('Cart');
+    // public function addToCart($id)
+    // {
+    //     $product = Product::find($id);
+    //     if(!$product) {
+    //         abort(404);
+    //     }
+    //     $cart = session()->get('Cart');
 
-        // if cart is empty then this the first product
-        if(!$cart) {
-            $cart = [
-                    $id => [
-                        "name" => $product->name,
-                        "quantity" => 1,
-                        "price" => $product->price,
-                        "photo" => $product->photo
-                    ]
-            ];
-            session()->put('cart', $cart);
-            return response($cart,200);
-            // return redirect()->back()->with('success', 'Product added to cart successfully!');
-        }
-        // if cart not empty then check if this product exist then increment quantity
-        if(isset($cart[$id])) {
-            $cart[$id]['quantity']++;
-            session()->put('cart', $cart);
-            return response('success');
+    //     // if cart is empty then this the first product
+    //     if(!$cart) {
+    //         $cart = [
+    //                 $id => [
+    //                     "name" => $product->name,
+    //                     "quantity" => 1,
+    //                     "price" => $product->price,
+    //                     "photo" => $product->photo
+    //                 ]
+    //         ];
+    //         session()->put('cart', $cart);
+    //         return response($cart,200);
+    //         // return redirect()->back()->with('success', 'Product added to cart successfully!');
+    //     }
+    //     // if cart not empty then check if this product exist then increment quantity
+    //     if(isset($cart[$id])) {
+    //         $cart[$id]['quantity']++;
+    //         session()->put('cart', $cart);
+    //         return response('success');
 
-            // return redirect()->back()->with('success', 'Product added to cart successfully!');
-        }
-        // if item not exist in cart then add to cart with quantity = 1
-        $cart[$id] = [
-            "name" => $product->name,
-            "quantity" => 1,
-            "price" => $product->price,
-            "photo" => $product->photo
-        ];
-        session()->put('cart', $cart);
-        return response('Sucess');
-        // return redirect()->back()->with('success', 'Product added to cart successfully!');
+    //         // return redirect()->back()->with('success', 'Product added to cart successfully!');
+    //     }
+    //     // if item not exist in cart then add to cart with quantity = 1
+    //     $cart[$id] = [
+    //         "name" => $product->name,
+    //         "quantity" => 1,
+    //         "price" => $product->price,
+    //         "photo" => $product->photo
+    //     ];
+    //     session()->put('cart', $cart);
+    //     return response('Sucess');
+    //     // return redirect()->back()->with('success', 'Product added to cart successfully!');
 
-    }
+    // }
 
     public function categories($id)
         {
@@ -169,7 +164,7 @@ class ProductController extends Controller
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(productRequest $request, $id)
+    public function update(Request $request, $id)
     {
 
 

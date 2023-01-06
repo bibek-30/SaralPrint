@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Banner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BannerController extends Controller
 {
@@ -26,6 +27,8 @@ class BannerController extends Controller
      */
     public function create(Request $request)
     {
+        // return $request;
+
         $request->validate([
             'info*.title' => 'required|unique:banners|min:3|max:255',
             'cover_img' => 'mimes:jpg,jpeg,png|max:3048',
@@ -37,15 +40,18 @@ class BannerController extends Controller
         ]);
         // return $request;
 
-        $banner_data= json_decode($request->info);
+        // $banner_data= json_decode($request->info);
+        $banner_data = $request;
+
+
 
         $file_banner = $request->file('cover_img');
-        $filename_banner = uniqid() . '.' . $file_banner->extension();
+        $filename_banner = uniqid().'.'.$file_banner->extension();
         $file_banner->storeAs('public/images/banner', $filename_banner);
 
         $banner=Banner::create([
             'title' => $banner_data->title,
-            'cover_img' => $filename_banner,
+            'cover_img' => env('APP_URL').Storage::url('public/images/banner/'.$filename_banner),
             'status' => $banner_data->status,
             'type' => $banner_data->type,
             'desc' => $banner_data->desc,
@@ -109,14 +115,29 @@ class BannerController extends Controller
      */
     public function update(Request $request, $id)
     {
+        // return $request;
+
         $request->validate([
-            'title' => 'min:3|max:255'
+            'title' => 'required|unique:banners|min:3|max:255',
+            'cover_img' => 'mimes:jpg,jpeg,png|max:3048',
+            'status' => 'required|in:active,inactive',
+            'type' => 'required',
+            'desc' => 'required',
         ]);
+
+        // if($request->has(file('cover_img'))){
+        // $file_banner = $request->file('cover_img');
+        // $filename_banner = uniqid().'.'.$file_banner->extension();
+        // $file_banner->storeAs('public/images/banner', $filename_banner);
+        //  };
 
         $banner = Banner::find($id);
         $banner->title = $request->title ? $request->title : $banner->title;
-        $banner->cover = $request->cover ? $request->cover : $banner->cover;
         $banner->status = $request->status ? $request->status : $banner->status;
+        // $banner->cover_img= env('APP_URL'). Storage::url('public/images/banner/'.$filename_banner);
+        $banner->desc = $request->desc ? $request->desc : $banner->desc;
+        $banner->type = $request->type ? $request->type : $banner->type;
+
         $banner->update();
 
 

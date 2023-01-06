@@ -8,9 +8,9 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\RateListController;
-use App\Http\Controllers\CorporateRateListController;
-
+use App\Http\Controllers\DeliveryController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -75,9 +75,9 @@ Route::controller(SettingController::class)->group(function () {
 
 Route::controller(CategoryController::class)->group( function(){
     Route::post('/category/add','create');
-    Route::get('/category/list','index');
+    Route::get('/category','index');
     Route::get('/category/show','show');
-    Route::get('/category/{id}','subcategory');
+    Route::get('/category/list}','subcategory');
     Route::delete('/cat/delete/{id}','destroy');
     Route::put('/category/{id}/update', 'editCategory');
     Route::put('/subCategory/{id}/update', 'editSubCategory');
@@ -93,11 +93,13 @@ Route::controller(BannerController::class)->group(function () {
     Route::post('/admin/banner/add', 'create');
     Route::get('/banner/list', 'index');
     Route::get('/banner/{id}', 'show');
+    Route::put('/admin/banner/{id}/update', 'update');
+    Route::delete('/admin/banner/{id}/delete', 'destroy');
+
+
 
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
-        Route::put('/admin/banner/{id}/update', 'update');
-        Route::delete('/admin/banner/{id}/delete', 'destroy');
     });
 });
 
@@ -119,6 +121,7 @@ Route::controller(ProductController::class)->group(function () {
 Route::controller(AttributeController::class)->group(function () {
 
     Route::post('/attribute/add', 'create');
+    Route::post('/attribute/insert', 'insert');
     Route::get('/attribute/list', 'index');
     Route::get('/attribute/{id}', 'show');
     Route::delete('/attribute/{id}/delete', 'destroy');
@@ -126,13 +129,6 @@ Route::controller(AttributeController::class)->group(function () {
 
 });
 
-Route::controller(CorporateRateListController::class)->group( function(){
-    Route::post('/corporate/price','create');
-    Route::GET('/corporate/{id}/','show');
-    Route::get('/corporate/list','index');
-    Route::put('/corporate/update/{id}','update');
-    Route::delete('/corporate/{id}','destroy');
-});
 
 Route::controller(RateListController::class)->group( function(){
     Route::post('/price','create');
@@ -140,4 +136,25 @@ Route::controller(RateListController::class)->group( function(){
     Route::get('/price/list','index');
     Route::put('/price/update/{id}','update');
     Route::delete('/price/{id}','destroy');
+});
+
+Route::controller(DeliveryController::class)->group(function () {
+    Route::post('/admin/delivery','create');
+    Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::get('/delivery/list','show');
+        Route::get('/','index');
+        Route::put('/price/update/{id}','update');
+        Route::delete('/price/{id}','destroy');
+    });
+});
+
+Route::post('/product/add/test',[App\Http\Controllers\ProductTestController::class,'add']);
+
+
+Route::controller(CouponController::class)->group( function(){
+    Route::post('/coupon/add','create');
+    Route::get('/price/{id}','show');
+    Route::get('/coupon','index');
+    Route::put('/coupon/update/{id}','update');
+    Route::delete('/coupon/{id}','destroy');
 });

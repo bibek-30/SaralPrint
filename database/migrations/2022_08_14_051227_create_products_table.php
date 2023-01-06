@@ -19,16 +19,8 @@ class CreateProductsTable extends Migration
             $table->string('name')->unique();
             $table->string('image');
             $table->string('desc');
-            // $table->unsignedBigInteger('category_id');
-            // $table->foreignId('category_id')->references('id')->on('categories');
             $table->foreignId('category_id')->constrained();
-            $table->string('size');
-            $table->string('paperWeight');
-            $table->string('Lamination');
-            $table->string('weight');
-            $table->string('discount');
             $table->timestamps();
-
         });
     }
 

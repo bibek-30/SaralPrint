@@ -18,7 +18,7 @@ class CategoryResource extends JsonResource
         return [
             'id'=>$this->id,
             'name'=>$this->name,
-            'sub_categories' => SubCategoryResource::collection($this->subCategories)
+            'sub_categories' => SubCategoryResource::collection($this->subCategories),
 
         ];
     }

@@ -15,9 +15,10 @@ class CreateRateListsTable extends Migration
     {
         Schema::create('rate_lists', function (Blueprint $table) {
             $table->id();
-            $table->string('quantity');
-            $table->string('normal_price');
-            $table->string('urgent_price');
+            $table->string('from');
+            $table->string('to');
+            $table->string('normal');
+            $table->string('urgent');
             $table->foreignId('product_id')->constrained();
             $table->string('discount')->nullable();
             $table->timestamps();

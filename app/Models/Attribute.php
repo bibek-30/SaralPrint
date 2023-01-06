@@ -16,10 +16,6 @@ protected $fillable=[
     'product_id',
 ];
 
-protected $casts = [
-    'features' => 'json',
-];
-
 public function product(){
     return $this->belongsTo(Product::class);
 }

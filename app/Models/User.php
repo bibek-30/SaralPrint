@@ -25,12 +25,9 @@ class User extends Authenticatable
         'city',
         'address',
         'mobile_number',
-        'telephone_no  ',
         'type',
-        'pan_number',
         'status',
         'pan_document',
-        'profile_image',
         'mobile_verified_code',
         'is_admin',
     ];

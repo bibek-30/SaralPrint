@@ -5,14 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class RateList extends Model
+class Coupon extends Model
 {
     use HasFactory;
     protected $fillable=[
-        'from', 'to', 'normal','urgent','product_id','discount',
+        'coupon_code', 'value','type','status','product','shipping',
     ];
-
-    public function product(){
-        return $this->belongsTo(Product::class);
-    }
 }

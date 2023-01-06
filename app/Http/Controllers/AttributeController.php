@@ -41,8 +41,6 @@ class AttributeController extends Controller
 
         // Response if user created successfully
         return response()->json($response, 201);
-
-
     }
 
     /**

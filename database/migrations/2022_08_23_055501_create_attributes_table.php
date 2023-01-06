@@ -17,7 +17,6 @@ class CreateAttributesTable extends Migration
             $table->id();
             $table->string('attribute');
             $table->string('value');
-            $table->json('features');
             $table->foreignId('product_id')->constrained();
             $table->timestamps();
         });

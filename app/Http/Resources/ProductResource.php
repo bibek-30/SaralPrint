@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Faker\Guesser\Name;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductResource extends JsonResource
@@ -14,6 +15,12 @@ class ProductResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        // return parent::toArray($request);
+        return [
+            'name' =>$this->name,
+            'desc'=>$this->desc,
+            'category_id'=>$this->category_id,
+            'image'=>$this->image,
+        ];
     }
 }

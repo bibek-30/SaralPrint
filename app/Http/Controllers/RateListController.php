@@ -29,19 +29,21 @@ class RateListController extends Controller
     {
         // return "bibek";
         $request->validate([
-            'quantity'=>'required',
-            'normal_price'=>'required',
-            'urgent_price'=>'required',
+            'from'=>'required',
+            'to'=>'required',
+            'normal'=>'required',
+            'urgent'=>'required',
             'product_id'=>'required',
-            'discount'=>''
+            'discount'=>'required'
 
         ]);
         // return "bibek";
 
         $price = RateList::create([
-            'quantity'=> $request -> quantity,
-            'normal_price'=>$request -> normal_price,
-            'urgent_price'=>$request->urgent_price,
+            'from'=>$request->range_from,
+            'to'=>$request->range_from,
+            'normal'=>$request -> normal_price,
+            'urgent'=>$request->urgent_price,
             'product_id'=>$request->product_id,
             'discount'=>$request->discount,
         ]);

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCorporateRateListsTable extends Migration
+class CreateDeliveriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateCorporateRateListsTable extends Migration
      */
     public function up()
     {
-        Schema::create('corporate_rate_lists', function (Blueprint $table) {
+        Schema::create('deliveries', function (Blueprint $table) {
             $table->id();
-            $table->string('quantity');
-            $table->string('normal_price');
-            $table->string('urgent_price');
-            $table->foreignId('product_id')->constrained();
-            $table->string('discount')->nullable();
+            $table->string('location');
+            $table->string('charge');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ class CreateCorporateRateListsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('corporate_rate_lists');
+        Schema::dropIfExists('deliveries');
     }
 }

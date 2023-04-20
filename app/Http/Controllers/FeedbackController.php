@@ -39,11 +39,11 @@ class SettingController extends Controller
             'facebook' => 'required',
             'twitter' =>             'required',
             'instagram' => 'required',
-            'linkedIn' =>'required',
-            'website' =>'required',
-    ]);
+            'linkedIn' => 'required',
+            'website' => 'required',
+        ]);
 
-             $setting = Setting::create([
+        $setting = Setting::create([
             'name' => $request->name,
             'estd' => $request->estd,
             'address' => $request->address,

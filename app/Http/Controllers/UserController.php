@@ -41,7 +41,7 @@ class UserController extends Controller
             'data*.name'            => 'required',
             'data*.gender'          => 'in:male,female,others',
             'data*.address'         => 'required',
-            'data*.city'            =>'required',
+            'data*.city'            => 'required',
             'data*.mobile_number.*' => 'required|regex:/9[6-8]{1}[0-9]{8}/|digits:10|distinct|unique:users',
             'data*.email'           => 'required|email|unique:users',
             'data*.password'        => 'required|min:8|max:20|regex:/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,20})/|confirmed',
@@ -58,13 +58,12 @@ class UserController extends Controller
             $file_pan     = $request->file('pan_document');
             $filename_pan = uniqid() . '.' . $file_pan->extension();
             $file_pan->storeAs('public/images/pan', $filename_pan);
-
         }
 
-        $user=User::create([
+        $user = User::create([
             'name'                 => $user_data->name,
             'gender'               => $user_data->gender,
-            'city'                 =>$user_data->city,
+            'city'                 => $user_data->city,
 
             'address'              => $user_data->address,
             'mobile_number'        => $user_data->mobile_number,
@@ -72,7 +71,7 @@ class UserController extends Controller
             'password'             => Hash::make($user_data->password),
             'type'                 => $user_data->type,
             'pan_number'           => $user_data->pan_number,
-            'pan_document'         => $request->has('pan_document') ? env('APP_URL').Storage::url('public/images/pan/'.$filename_pan): null,
+            'pan_document'         => $request->has('pan_document') ? env('APP_URL') . Storage::url('public/images/pan/' . $filename_pan) : null,
             'mobile_verified_code' => rand(11111, 99999),
         ]);
 
@@ -82,17 +81,17 @@ class UserController extends Controller
         $response = [
             "status"  => true,
             "message" => "User Account Created Successfully",
-            "token" => $token,
-            "user" => $user
+            "user" => $user,
+            "token" => $token
+
         ];
 
         // Response if user created successfully
         return response()->json($response, 201);
-
-
     }
 
-    public function image(Request $request, $id){
+    public function image(Request $request, $id)
+    {
 
         $request->validate([
             'data*.name'            => 'required',
@@ -103,9 +102,9 @@ class UserController extends Controller
         $user_data = json_decode($request);
 
         // if($request->has('pan_document')){
-            $file_pan     = $request->file('pan_document');
-            $filename_pan = uniqid() . '.' . $file_pan->extension();
-            $file_pan->storeAs('public/images/pan', $filename_pan);
+        $file_pan     = $request->file('pan_document');
+        $filename_pan = uniqid() . '.' . $file_pan->extension();
+        $file_pan->storeAs('public/images/pan', $filename_pan);
         //         if($request->has('profile_image')){
         //     $file_profile     = $request->file('profile_image');
         //     $filename_profile = uniqid() . '.' . $file_profile->extension();
@@ -117,7 +116,7 @@ class UserController extends Controller
 
         //  $user->pan_document = $request->pan_document ? $filename_pan : null;
 
-         $user->pan_document = env('APP_URL').Storage::url('public/images/pan/'.$filename_pan);
+        $user->pan_document = env('APP_URL') . Storage::url('public/images/pan/' . $filename_pan);
         //  $user->profile_image = env('APP_URL'). Storage::url('public/images/profile/'.$filename_profile);
         $user->save();
 
@@ -131,7 +130,7 @@ class UserController extends Controller
         return response($user);
     }
 
-            // }
+    // }
     // Signup for Admin
     public function createAdmin(Request $request)
     {
@@ -372,8 +371,9 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'old_password' => 'required',
-            'password'     => 'required|min:8|max:20|regex:/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,20})/|confirmed',
+            'password'     => 'required|min:8|max:20|confirmed',
         ]);
+        // regex:/((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{8,20})/
 
         if ($validator->fails()) {
             return response()->json([

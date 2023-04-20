@@ -52,15 +52,14 @@ Route::controller(UserController::class)->group(function () {
 
 
 
-Route::controller(OrderController::class)->group(function (){
-Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::get('/order', 'create');
-    Route::get('/{user_id}/order', 'show');
-    Route::get('/list',  'index');
-    Route::delete('/order/{id}/delete/}', 'destroy');
-    Route::put('/order/{id}','update');
-
-});
+Route::controller(OrderController::class)->group(function () {
+    Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::get('/order', 'create');
+        Route::get('/{user_id}/order', 'show');
+        Route::get('/list',  'index');
+        Route::delete('/order/{id}/delete/}', 'destroy');
+        Route::put('/order/{id}', 'update');
+    });
 });
 
 
@@ -68,22 +67,21 @@ Route::controller(SettingController::class)->group(function () {
     Route::group(['middleware' => 'auth:sanctum'], function () {
         // Setting Section
         Route::post('/about', 'create');
-        Route::get('/about/show','index');
+        Route::get('/about/show', 'index');
         Route::put('/about/{id}/update',  'update');
     });
 });
 
-Route::controller(CategoryController::class)->group( function(){
-    Route::post('/category/add','create');
-    Route::get('/category','index');
-    Route::get('/category/show','show');
-    Route::get('/category/list}','subcategory');
-    Route::delete('/cat/delete/{id}','destroy');
+Route::controller(CategoryController::class)->group(function () {
+    Route::post('/category/add', 'create');
+    Route::get('/category', 'index');
+    Route::get('/category/show', 'show');
+    Route::get('/category/list}', 'subcategory');
+    Route::delete('/cat/delete/{id}', 'destroy');
     Route::put('/category/{id}/update', 'editCategory');
     Route::put('/subCategory/{id}/update', 'editSubCategory');
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
-
     });
 });
 
@@ -112,9 +110,9 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/cart/{id}', 'addToCart');
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::get('/subCategory/{category:id}', 'categories')->name('categories');
-    Route::put('/product/{id}/update', 'update');
-    Route::delete('/product/{id}/delete', 'destroy');
+        Route::get('/subCategory/{category:id}', 'categories')->name('categories');
+        Route::put('/product/{id}/update', 'update');
+        Route::delete('/product/{id}/delete', 'destroy');
     });
 });
 
@@ -126,35 +124,34 @@ Route::controller(AttributeController::class)->group(function () {
     Route::get('/attribute/{id}', 'show');
     Route::delete('/attribute/{id}/delete', 'destroy');
     Route::put('/attribute/{id}/update', 'update');
-
 });
 
 
-Route::controller(RateListController::class)->group( function(){
-    Route::post('/price','create');
-    Route::get('/price/{id}','show');
-    Route::get('/price/list','index');
-    Route::put('/price/update/{id}','update');
-    Route::delete('/price/{id}','destroy');
+Route::controller(RateListController::class)->group(function () {
+    Route::post('/price', 'create');
+    Route::get('/price/{id}', 'show');
+    Route::get('/price/list', 'index');
+    Route::put('/price/update/{id}', 'update');
+    Route::delete('/price/{id}', 'destroy');
 });
 
 Route::controller(DeliveryController::class)->group(function () {
-    Route::post('/admin/delivery','create');
+    Route::post('/admin/delivery', 'create');
     Route::group(['middleware' => 'auth:sanctum'], function () {
-        Route::get('/delivery/list','show');
-        Route::get('/','index');
-        Route::put('/price/update/{id}','update');
-        Route::delete('/price/{id}','destroy');
+        Route::get('/delivery/list', 'show');
+        Route::get('/', 'index');
+        Route::put('/price/update/{id}', 'update');
+        Route::delete('/price/{id}', 'destroy');
     });
 });
 
-Route::post('/product/add/test',[App\Http\Controllers\ProductTestController::class,'add']);
+Route::post('/product/add/test', [App\Http\Controllers\ProductTestController::class, 'add']);
 
 
-Route::controller(CouponController::class)->group( function(){
-    Route::post('/coupon/add','create');
-    Route::get('/price/{id}','show');
-    Route::get('/coupon','index');
-    Route::put('/coupon/update/{id}','update');
-    Route::delete('/coupon/{id}','destroy');
+Route::controller(CouponController::class)->group(function () {
+    Route::post('/coupon/add', 'create');
+    Route::get('/price/{id}', 'show');
+    Route::get('/coupon', 'index');
+    Route::put('/coupon/update/{id}', 'update');
+    Route::delete('/coupon/{id}', 'destroy');
 });

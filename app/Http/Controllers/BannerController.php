@@ -40,18 +40,18 @@ class BannerController extends Controller
         ]);
         // return $request;
 
-        // $banner_data= json_decode($request->info);
-        $banner_data = $request;
+        $banner_data = json_decode($request->info);
+        // $banner_data = $request;
 
 
 
         $file_banner = $request->file('cover_img');
-        $filename_banner = uniqid().'.'.$file_banner->extension();
+        $filename_banner = uniqid() . '.' . $file_banner->extension();
         $file_banner->storeAs('public/images/banner', $filename_banner);
 
-        $banner=Banner::create([
+        $banner = Banner::create([
             'title' => $banner_data->title,
-            'cover_img' => env('APP_URL').Storage::url('public/images/banner/'.$filename_banner),
+            'cover_img' => env('APP_URL') . Storage::url('public/images/banner/' . $filename_banner),
             'status' => $banner_data->status,
             'type' => $banner_data->type,
             'desc' => $banner_data->desc,
@@ -60,11 +60,10 @@ class BannerController extends Controller
         $response = [
             "status" => true,
             "message" => "Banner Added Successfully",
-            "banner"=>$banner
+            "banner" => $banner
         ];
         // Response if banner added successfully
         return $response;
-
     }
 
     /**
